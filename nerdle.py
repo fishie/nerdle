@@ -1,48 +1,59 @@
-square_count = 8
-available_symbols = '0123456789+-*/='
-count = 0
+available_symbols = '0123456789+-*/'
 
-def get_valid_symbols(previous_symbols):
-    if len(previous_symbols) == 8:
+def generate_valid_expressions(previous_symbols, desired_length):
+    if len(previous_symbols) == desired_length:
         try:
-            left, right = previous_symbols.split('=')
-            if eval(left) == eval(right):
-                yield previous_symbols
+            right_side = eval(previous_symbols)
+            if isinstance(right_side, int) or right_side.is_integer():
+                equation = f'{previous_symbols}={int(right_side)}'
+                if len(equation) == 8:
+                    yield equation
         except:
             pass
         return
-    if previous_symbols == '':
-        for symbol in '1':
-            yield from get_valid_symbols(previous_symbols + symbol)
-        return
-    if len(previous_symbols) == 6 and '=' not in previous_symbols:
-        yield from get_valid_symbols(previous_symbols + '=')
-        return
-    if len(previous_symbols) == 7 or '=' in previous_symbols:
-        for symbol in '0123456789':
-            yield from get_valid_symbols(previous_symbols + symbol)
-        return
-    if previous_symbols[-1] in '+-':
+    if previous_symbols == '' or previous_symbols[-1] in '+-':
         for symbol in '123456789':
-            yield from get_valid_symbols(previous_symbols + symbol)
+            yield from generate_valid_expressions(previous_symbols + symbol, desired_length)
         return
     if previous_symbols[-1] in '*/':
         for symbol in '123456789-':
-            yield from get_valid_symbols(previous_symbols + symbol)
-        return
-    if previous_symbols[-1] == '=':
-        if len(previous_symbols) == 7:
-            for symbol in '0123456789':
-                yield from get_valid_symbols(previous_symbols + symbol)
-        else:
-            for symbol in '123456789':
-                yield from get_valid_symbols(previous_symbols + symbol)
+            yield from generate_valid_expressions(previous_symbols + symbol, desired_length)
         return
     for symbol in available_symbols:
-        yield from get_valid_symbols(previous_symbols + symbol)
+        yield from generate_valid_expressions(previous_symbols + symbol, desired_length)
 
-for symbol in get_valid_symbols(''):
-    count += 1
-    print(symbol)
+expressions = set()
+for left_size in range(4, 7):
+    for expression in generate_valid_expressions('', left_size):
+        if '/' in expression:
+            continue
+        print(expression)
+        expressions.add(expression)
+print(len(expressions))
 
-print(count)
+while True:
+    try:
+        known, not_possibles = input().split(',')
+    except Exception as e:
+        print(e, 'try again!')
+        continue
+    print(f'known={known}, not_possibles={not_possibles}')
+
+    if len(known) != 8:
+        print('the length of known is not 8, please try again')
+        continue
+
+    count = 0
+    for expression in expressions:
+        if set(expression) & set(not_possibles):
+            continue
+
+        for (k, e) in zip(known, expression):
+            if k != ' ' and k != e:
+                break
+        else:
+            print(expression)
+            count += 1
+            continue
+
+    print(f'{count}/{len(expressions)}')
