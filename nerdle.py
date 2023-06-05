@@ -8,8 +8,8 @@ def generate_valid_expressions(previous_symbols, desired_length):
                 equation = f'{previous_symbols}={int(right_side)}'
                 if len(equation) == 8:
                     yield equation
-        except:
-            pass
+        except SyntaxError:
+             pass
         return
     if previous_symbols == '' or previous_symbols[-1] in '+-':
         for symbol in '123456789':
@@ -25,19 +25,17 @@ def generate_valid_expressions(previous_symbols, desired_length):
 expressions = set()
 for left_size in range(4, 7):
     for expression in generate_valid_expressions('', left_size):
-        if '/' in expression:
-            continue
         print(expression)
         expressions.add(expression)
 print(len(expressions))
 
 while True:
     try:
-        known, not_possibles = input().split(',')
+        known, possibles, not_possibles = input().split(',')
     except Exception as e:
         print(e, 'try again!')
         continue
-    print(f'known={known}, not_possibles={not_possibles}')
+    print(f'known={known}, possibles={possibles}, not_possibles={not_possibles}')
 
     if len(known) != 8:
         print('the length of known is not 8, please try again')
@@ -45,7 +43,11 @@ while True:
 
     count = 0
     for expression in expressions:
-        if set(expression) & set(not_possibles):
+        expression_set = set(expression)
+        if expression_set & set(not_possibles):
+            continue
+
+        if set(possibles) - expression_set:
             continue
 
         for (k, e) in zip(known, expression):
