@@ -7,7 +7,7 @@ def generate_valid_expressions(previous_symbols, desired_length, expressions=set
     if len(previous_symbols) == desired_length:
         try:
             right_side = eval(previous_symbols)
-            if (isinstance(right_side, int) or right_side.is_integer()) and int(right_side) >= 0:
+            if (isinstance(right_side, int) or right_side.is_integer()) and right_side >= 0:
                 equation = f'{previous_symbols}={int(right_side)}'
                 if len(equation) == 8:
                     expressions.add(equation)
@@ -24,12 +24,11 @@ def generate_valid_expressions(previous_symbols, desired_length, expressions=set
     return expressions
 
 def worker(arguments):
-    start, left_size = arguments
-    return generate_valid_expressions(start, left_size)
+    return generate_valid_expressions(*arguments)
 
 if __name__ == "__main__":
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    results = pool.map(worker, [(start, left_size) for left_size in range(4, 7) for start in '123456789'])
+    results = pool.map(worker, ((start, left_size) for left_size in range(4, 7) for start in '123456789'))
     expressions = set(chain.from_iterable(results))
 
     for expression in sorted(expressions, key=lambda x: len(set(x))):
