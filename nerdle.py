@@ -26,9 +26,10 @@ def generate_valid_expressions(previous_symbols, desired_length, expressions=set
 if __name__ == "__main__":
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
     inputs = [('', 4), ('', 5)]
-    inputs.extend([(start, 6) for start in '123456789'])
+    inputs.extend([(start + next, 6) for start in '123456789' for next in available_symbols])
     results = pool.starmap(generate_valid_expressions, inputs)
-    expressions = set(chain.from_iterable(results))
+    pool.close()
+    expressions = set(chain(*results))
 
     for expression in sorted(expressions, key=lambda x: len(set(x))):
         print(expression)
