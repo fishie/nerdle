@@ -13,15 +13,14 @@ def generate_valid_expressions(previous_symbols, desired_length, expressions=set
                     expressions.add(equation)
         except SyntaxError:
             pass
-    elif previous_symbols[-1] in '+-':
-        for symbol in '123456789':
-            generate_valid_expressions(previous_symbols + symbol, desired_length, expressions)
+        return
+    possible_symbols = available_symbols
+    if previous_symbols[-1] in '+-':
+        possible_symbols = '123456789'
     elif previous_symbols[-1] in '*/':
-        for symbol in '123456789-':
-            generate_valid_expressions(previous_symbols + symbol, desired_length, expressions)
-    else:
-        for symbol in available_symbols:
-            generate_valid_expressions(previous_symbols + symbol, desired_length, expressions)
+        possible_symbols = '123456789-'
+    for symbol in possible_symbols:
+        generate_valid_expressions(previous_symbols + symbol, desired_length, expressions)
     return expressions
 
 def worker(arguments):
