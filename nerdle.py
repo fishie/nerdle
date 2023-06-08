@@ -7,7 +7,7 @@ def generate_valid_expressions(previous_symbols, desired_length, expressions=set
     if len(previous_symbols) == desired_length:
         try:
             right_side = eval(previous_symbols)
-            if right_side != None and (isinstance(right_side, int) or right_side.is_integer()) and int(right_side) >= 0:
+            if (isinstance(right_side, int) or right_side.is_integer()) and int(right_side) >= 0:
                 equation = f'{previous_symbols}={int(right_side)}'
                 if len(equation) == 8:
                     expressions.add(equation)
