@@ -15,6 +15,12 @@ def generate_valid_expressions(previous_symbols, desired_length, expressions=set
             pass
         return
     possible_symbols = available_symbols
+    if len(previous_symbols) == desired_length - 2:
+        try:
+            if int(previous_symbols):
+                possible_symbols = '+-*/'
+        except ValueError:
+            pass
     if previous_symbols == '' or previous_symbols[-1] in '+-':
         possible_symbols = '123456789'
     elif previous_symbols[-1] in '*/':
