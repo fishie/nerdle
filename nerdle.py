@@ -5,22 +5,21 @@ available_symbols = '0123456789+-*/'
 
 def generate_valid_expressions(previous_symbols, desired_length, expressions=set()):
     if len(previous_symbols) == desired_length:
-        try:
-            right_side = eval(previous_symbols)
-            if (isinstance(right_side, int) or right_side.is_integer()) and right_side >= 0:
-                equation = f'{previous_symbols}={int(right_side)}'
-                if len(equation) == 8:
-                    expressions.add(equation)
-        except SyntaxError:
-            pass
+        right_side = eval(previous_symbols)
+        if (isinstance(right_side, int) or right_side.is_integer()) and right_side >= 0:
+            equation = f'{previous_symbols}={int(right_side)}'
+            if len(equation) == 8:
+                expressions.add(equation)
         return
     possible_symbols = available_symbols
     if len(previous_symbols) == 3 and desired_length == 6 and previous_symbols.isnumeric():
         possible_symbols = '-/'
-    if previous_symbols == '' or previous_symbols[-1] in '+-':
+    elif previous_symbols == '' or previous_symbols[-1] in '+-':
         possible_symbols = '123456789'
     elif previous_symbols[-1] in '*/':
         possible_symbols = '123456789-'
+    if desired_length - len(previous_symbols) == 1:
+        possible_symbols = set(possible_symbols) - set('+-*/')
     for symbol in possible_symbols:
         generate_valid_expressions(previous_symbols + symbol, desired_length, expressions)
     return expressions
