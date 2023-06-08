@@ -15,7 +15,7 @@ def generate_valid_expressions(previous_symbols, desired_length, expressions=set
             pass
         return
     possible_symbols = available_symbols
-    if previous_symbols[-1] in '+-':
+    if previous_symbols == '' or previous_symbols[-1] in '+-':
         possible_symbols = '123456789'
     elif previous_symbols[-1] in '*/':
         possible_symbols = '123456789-'
@@ -23,12 +23,11 @@ def generate_valid_expressions(previous_symbols, desired_length, expressions=set
         generate_valid_expressions(previous_symbols + symbol, desired_length, expressions)
     return expressions
 
-def worker(arguments):
-    return generate_valid_expressions(*arguments)
-
 if __name__ == "__main__":
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    results = pool.map(worker, ((start, left_size) for left_size in range(4, 7) for start in '123456789'))
+    inputs = [('', 4), ('', 5)]
+    inputs.extend([(start, 6) for start in '123456789'])
+    results = pool.starmap(generate_valid_expressions, inputs)
     expressions = set(chain.from_iterable(results))
 
     for expression in sorted(expressions, key=lambda x: len(set(x))):
