@@ -26,7 +26,8 @@ def generate_valid_expressions(previous_symbols, desired_length, expressions=set
 
 if __name__ == "__main__":
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    inputs = [('', 4), ('', 5)]
+    inputs = [('', 4)]
+    inputs.extend((start, 5) for start in '123456789')
     inputs.extend((start + next, 6) for start in '123456789' for next in available_symbols)
     results = pool.starmap(generate_valid_expressions, inputs)
     pool.close()
